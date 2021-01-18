@@ -1,0 +1,11 @@
+<h1>{{ Question.text }}</h1>
+
+<ul>
+    {% for choice in Question.choice_set.all %}
+      <li>
+        {{ choice.text }} --> {{ choice.vote }}
+      </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'firstApp:detail' Question.id %}"> back again vote </a>

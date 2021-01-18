@@ -1,0 +1,9 @@
+{% if list_Question %}
+  <ul>
+    {%for question in list_Question %}
+      <li><a href="{% url 'firstApp:detail' question.id %}">{{ question.text }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No firstApp are available</p>
+{% endif %}
