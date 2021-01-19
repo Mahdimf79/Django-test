@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, reverse
 from django.http import HttpResponse,HttpResponseRedirect
 from django.utils import timezone
+from django.contrib.auth.models import User
 from . import models
 
 
@@ -58,5 +59,25 @@ def create_choice(request, pk):
     textc = str(request.POST['choice_text'])
     question = get_object_or_404(models.Question, pk = pk)
     question.choice_set.create(text = textc, vote=0)
-    context = {'Question' : question}
     return HttpResponseRedirect(reverse('firstApp:detail', args=(question.id,)))
+
+
+def register(request):
+    return render(request, 'firstApp/register.html')
+
+
+def register_set(request):
+    username = request.POST['username']
+    email = request.POST['email']
+    firstname = request.POST['firstname']
+    lastname = request.POST['lastname']
+    password = request.POST['password']
+    repassword = request.POST['repassword']
+    status = False
+    if password == repassword:
+        status = True
+    if status:
+        user = models.Username(username = username, email = email, firstname = firstname,
+         lastname = lastname, password = password )
+        user.save()
+    return HttpResponseRedirect(reverse('firstApp:index'))

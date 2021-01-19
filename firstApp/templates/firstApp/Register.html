@@ -1,0 +1,10 @@
+<form action="{% url 'firstApp:register_set' %}" method="post">
+  {% csrf_token %}
+  <input type="text" name="username" value="" placeholder="Username">
+  <input type="text" name="email" value="" placeholder="Email">
+  <input type="text" name="firstname" value="" placeholder="Firstname">
+  <input type="text" name="lastname" value="" placeholder="Lastname">
+  <input type="text" name="password" value="" placeholder="Password">
+  <input type="text" name="repassword" value="" placeholder="RePassword">
+  <input type="submit" value="Register">
+</form>

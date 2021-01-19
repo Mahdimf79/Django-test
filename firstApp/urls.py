@@ -12,4 +12,6 @@ urlpatterns = [
     url(r'^create_question$', views.create_question, name='create_question'),
     url(r'^(?P<pk>[0-9]+)/setChoice$', views.setChoice, name='setChoice'),
     url(r'^(?P<pk>[0-9]+)/create_choice$', views.create_choice, name='create_choice'),
+    url(r'^register$', views.register, name='register'),
+    url(r'^register_set$', views.register_set, name='register_set'),
 ]

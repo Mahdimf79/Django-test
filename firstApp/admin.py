@@ -14,3 +14,7 @@ class QuestionAdmin(admin.ModelAdmin):
 class ChoiceAdmin(admin.ModelAdmin):
     list_display = ('text','question') #display fields in lists
     fields = ['question',('text','vote')] #location fields in create page
+
+@admin.register(models.Username)
+class UsernameAdmin(admin.ModelAdmin):
+    list_display = ('id','username')
