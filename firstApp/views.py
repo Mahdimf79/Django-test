@@ -1,21 +1,28 @@
 from django.shortcuts import render, get_object_or_404, reverse
 from django.http import HttpResponse,HttpResponseRedirect
+from django.utils import timezone
 from . import models
+
+
 
 def index(request,):
     list_Question = models.Question.objects.order_by('-pub_date')
-    context = {'list_Question' : list_Question}
+    list_Choice = models.Choice.objects.all()
+    context = {'list_Question' : list_Question, 'list_Choice' : list_Choice}
     return render(request, 'firstApp/index.html', context)
+
 
 def detail(request, pk):
     question = get_object_or_404(models.Question, pk=pk)
     context = {'Question' : question}
     return render(request, 'firstApp/detail.html', context)
 
+
 def results(request, pk):
     question = get_object_or_404(models.Question, pk=pk)
     context = {'Question' : question}
     return render(request, 'firstApp/results.html', context)
+
 
 def vote(request, pk):
     question = get_object_or_404(models.Question, pk=pk)
@@ -28,3 +35,28 @@ def vote(request, pk):
         choice_selected.vote += 1
         choice_selected.save()
         return HttpResponseRedirect(reverse('firstApp:results', args=(question.id,)))
+
+
+def setQuestion(request):
+    return render(request, 'firstApp/setQuestion.html')
+
+
+def create_question(request):
+    textq = str(request.POST['question_text'])
+    question = models.Question(text = textq, pub_date = timezone.now())
+    question.save()
+    return HttpResponseRedirect(reverse('firstApp:index'))
+
+
+def setChoice(request, pk):
+    question = get_object_or_404(models.Question, pk=pk)
+    context = {'Question' : question}
+    return render(request, 'firstApp/setChoice.html', context)
+
+
+def create_choice(request, pk):
+    textc = str(request.POST['choice_text'])
+    question = get_object_or_404(models.Question, pk = pk)
+    question.choice_set.create(text = textc, vote=0)
+    context = {'Question' : question}
+    return HttpResponseRedirect(reverse('firstApp:detail', args=(question.id,)))

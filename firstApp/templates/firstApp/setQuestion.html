@@ -1,0 +1,5 @@
+<form action="{% url 'firstApp:create_question' %}" method="post">
+  {% csrf_token %}
+  <input type="text" name="question_text" value="" placeholder="Question">
+  <input type="submit" value="Create">
+</form>
