@@ -1,0 +1,9 @@
+{% if error %}
+  <h4> {{error}} </h4>
+{% endif %}
+<form action="{% url 'firstApp:login_set' %}" method="post">
+  {% csrf_token %}
+  <input type="text" name="username" value="" placeholder="Username">
+  <input type="text" name="password" value="" placeholder="Password">
+  <input type="submit" value="Login">
+</form>

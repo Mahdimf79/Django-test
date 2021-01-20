@@ -1,5 +1,5 @@
 {% if Question %}
-    <h1>{{ Question.id }}</h1>
+    <h1>{{ Question.text }}</h1>
     <form action="{% url 'firstApp:create_choice' Question.id %}" method="post">
       {% csrf_token %}
       <input type="text" name="choice_text" value="" placeholder="Choice">

@@ -3,13 +3,19 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.utils import timezone
 from django.contrib.auth.models import User
 from . import models
+from django_globals import globals
 
 
 
-def index(request,):
+def index(request):
     list_Question = models.Question.objects.order_by('-pub_date')
     list_Choice = models.Choice.objects.all()
-    context = {'list_Question' : list_Question, 'list_Choice' : list_Choice}
+    #request.session['user'] = ''
+    user = request.session.get('user')
+    logout = 0
+    if user != '':
+        logout = 1
+    context = {'list_Question' : list_Question, 'list_Choice' : list_Choice, 'user' : user, 'logout' : logout}
     return render(request, 'firstApp/index.html', context)
 
 
@@ -39,13 +45,20 @@ def vote(request, pk):
 
 
 def setQuestion(request):
-    return render(request, 'firstApp/setQuestion.html')
+    user = request.session.get('user')
+    if user != '':
+        return render(request, 'firstApp/setQuestion.html')
+    else:
+        return HttpResponseRedirect(reverse('firstApp:index'))
+
+
 
 
 def create_question(request):
     textq = str(request.POST['question_text'])
-    question = models.Question(text = textq, pub_date = timezone.now())
-    question.save()
+    userid = request.session.get('id')
+    username = get_object_or_404(models.Username, id= userid)
+    username.question_set.create(text = textq, pub_date = timezone.now())
     return HttpResponseRedirect(reverse('firstApp:index'))
 
 
@@ -63,7 +76,11 @@ def create_choice(request, pk):
 
 
 def register(request):
-    return render(request, 'firstApp/register.html')
+    context = {'error' : ''}
+    if request.session.get('error') != '':
+        context = {'error' : request.session.get('error') }
+    request.session['error'] = ''
+    return render(request, 'firstApp/register.html', context)
 
 
 def register_set(request):
@@ -76,8 +93,42 @@ def register_set(request):
     status = False
     if password == repassword:
         status = True
+    else:
+        request.session['error'] = 'Password is carnt'
+        status = False
+        return HttpResponseRedirect(reverse('firstApp:register'))
     if status:
         user = models.Username(username = username, email = email, firstname = firstname,
          lastname = lastname, password = password )
         user.save()
+        userget = get_object_or_404(models.Username, username = username)
+        request.session['user'] = username
+        request.session['id'] = userget.id
+    return HttpResponseRedirect(reverse('firstApp:index'))
+
+
+def login(request):
+    context = {'error' : ''}
+    if request.session.get('error') != '':
+        context = {'error' : request.session.get('error') }
+    request.session['error'] = ''
+    return render(request, 'firstApp/login.html', context)
+
+
+def login_set(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = get_object_or_404(models.Username, username = username)
+    if password == user.password:
+        request.session['user'] = user.username
+        request.session['id'] = user.id
+        return HttpResponseRedirect(reverse('firstApp:index'))
+    else:
+        request.session['error'] = "User is not valid"
+        return HttpResponseRedirect(reverse('firstApp:login'))
+
+
+def logout(request):
+    request.session['user'] = ''
+    request.session['id'] = ''
     return HttpResponseRedirect(reverse('firstApp:index'))

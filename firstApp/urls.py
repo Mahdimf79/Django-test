@@ -14,4 +14,7 @@ urlpatterns = [
     url(r'^(?P<pk>[0-9]+)/create_choice$', views.create_choice, name='create_choice'),
     url(r'^register$', views.register, name='register'),
     url(r'^register_set$', views.register_set, name='register_set'),
+    url(r'^login$', views.login, name='login'),
+    url(r'^login_set$', views.login_set, name='login_set'),
+    url(r'^logout$', views.logout, name='logout'),
 ]

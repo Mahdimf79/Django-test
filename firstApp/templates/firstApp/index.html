@@ -1,3 +1,17 @@
+{% if user != "None" %}
+  <h1>{{ user }}</h1>
+{% endif %}
+{% if error_mesage %}
+  <h4> {{error_mesage}} </h4>
+{% endif %}
+{% if logout == 1 %}
+  <h4> <a href="{% url 'firstApp:logout' %}">Logout</a> </h4>
+  <a href="{% url 'firstApp:setQuestion' %}">create question</a>
+{% endif %}
+{% if logout != 1 %}
+  <a href="{% url 'firstApp:login' %}">Login</a>
+  <a href="{% url 'firstApp:register' %}">Register</a>
+{% endif %}
 {% if list_Question %}
   <ul>
     {%for question in list_Question %}
@@ -7,7 +21,6 @@
       </li>
     {% endfor %}
   </ul>
-  <a href="{% url 'firstApp:setQuestion' %}"> create question</a>
 {% else %}
   <p>No firstApp are available</p>
 {% endif %}
