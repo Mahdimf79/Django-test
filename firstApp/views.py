@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, reverse
-from django.http import HttpResponse,HttpResponseRedirect
+from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
 from django.utils import timezone
 from django.contrib.auth.models import User
 from . import models
@@ -116,16 +116,29 @@ def login(request):
 
 
 def login_set(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    user = get_object_or_404(models.Username, username = username)
-    if password == user.password:
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+
+    try:
+        user = models.Username.objects.get(username= username, password= password)
+        obj = {
+            'ok': True,
+            'values': {
+                'id' : user.id,
+                'username' : user.username
+            }
+        }
         request.session['user'] = user.username
         request.session['id'] = user.id
-        return HttpResponseRedirect(reverse('firstApp:index'))
-    else:
-        request.session['error'] = "User is not valid"
-        return HttpResponseRedirect(reverse('firstApp:login'))
+    except:
+        obj = {
+            'ok': False,
+            'values': {
+                'error' : 'naiomad dige'
+            }
+        }
+
+    return JsonResponse(obj)
 
 
 def logout(request):
