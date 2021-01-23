@@ -4,7 +4,8 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from . import models
 from django_globals import globals
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 def index(request):
@@ -50,7 +51,6 @@ def setQuestion(request):
         return render(request, 'firstApp/setQuestion.html')
     else:
         return HttpResponseRedirect(reverse('firstApp:index'))
-
 
 
 
@@ -108,10 +108,7 @@ def register_set(request):
 
 
 def login(request):
-    context = {'error' : ''}
-    if request.session.get('error') != '':
-        context = {'error' : request.session.get('error') }
-    request.session['error'] = ''
+    context = {'url' : static(settings.STATIC_URL, document_root= settings.STATIC_ROOT)}
     return render(request, 'firstApp/login.html', context)
 
 
