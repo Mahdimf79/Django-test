@@ -1,12 +1,15 @@
+<div>
+  <p id="error"></p>
+</div>
 <form method="post" id="form">
   {% csrf_token %}
-  <input type="text" name="username" placeholder="Username..">
-  <input type="text" name="email" placeholder="Email..">
-  <input type="text" name="firstname" placeholder="Firstname..">
-  <input type="text" name="lastname" placeholder="Lastname..">
-  <input type="text" name="password" placeholder="Password..">
-  <input type="text" name="repassword" placeholder="RePassword..">
-  <input type="submit" value="Register">
+  <input type="text" name="username" id="username" placeholder="Username">
+  <input type="text" name="email" id="email" placeholder="Email">
+  <input type="text" name="firstname" id="firstname" placeholder="Firstname">
+  <input type="text" name="lastname" id="lastname" placeholder="Lastname">
+  <input type="text" name="password" id="password" placeholder="Password">
+  <input type="text" name="repassword" id="repassword" placeholder="RePassword">
+  <button id="sub" type="submit">Register</button>
 </form>
 
 {% block javascript %}
@@ -20,14 +23,14 @@
       e.preventDefault();
 
 
-      function validateEmail(email) {
+      function validateEmail(emailget) {
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(String(email).toLowerCase());
+        return re.test(String(emailget).toLowerCase());
       }
 
       function validateFirALas(firAlas){
-        const re = /^[a-zA-Z]+ [a-zA-Z]+$/;
-        return re.test(String(firAlas).toLowerCase())
+        const re = /^[a-zA-Z]+$/;
+        return re.test(String(firAlas).toLowerCase());
       }
 
 
@@ -48,24 +51,32 @@
             if(validateEmail(email)){
               if(validateFirALas(firstname)){
                 if(validateFirALas(lastname)){
-                  fetch('http://127.0.0.1:8000/firstApp/login_set/',{
+                  fetch('http://127.0.0.1:8000/firstApp/register_set/',{
                      method: 'POST',
                      headers: { 'Content-Type': 'application/x-www-form-urlencoded',
                        "X-CSRFToken": '{{csrf_token}}',
                      },
-                     body: `username=${username}&password=${password}`
+                     body: `username=${username}&password=${password}&repassword=${repassword}&email=${email}&firstname=${firstname}&lastname=${lastname}`
                   })
                   .then(response => response.json())
                   .then(data => {
                     if(data.ok){
-                      window.location.href = "http://127.0.0.1:8000/firstApp/";
+                      window.location.href = "http://127.0.0.1:8000/firstApp/login";
                     }else{
-                      error.innerHTML = "field join"
+                      error.innerHTML = data.status;
                     }
                   });
+                }else{
+                  error.innerHTML = "Invalid Lastname";
                 }
+              }else{
+                error.innerHTML = "Invalid Firstname";
               }
+            }else{
+              error.innerHTML = "Invalid Email";
             }
+          }else{
+            error.innerHTML = "A password is not the same as repeating a password";
           }
         }else{
           error.innerHTML = "The number of characters in the password is not allowed";
@@ -73,6 +84,7 @@
       }else{
         error.innerHTML = "The number of characters in the username is not allowed";
       }
+
     }
 
 </script>

@@ -6,6 +6,7 @@ from . import models
 from django_globals import globals
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
@@ -94,7 +95,7 @@ def register(request):
     else:
         return render(request, 'firstApp/register.html')
 
-
+@csrf_exempt
 def register_set(request):
     username = request.POST['username']
     email = request.POST['email']
@@ -103,20 +104,28 @@ def register_set(request):
     password = request.POST['password']
     repassword = request.POST['repassword']
     status = False
+
     if password == repassword:
-        status = True
+        try:
+            usercheck = models.Username.objects.get(username = username)
+            obj = {
+                'ok': False,
+                'status' : 'This username is available'
+            }
+        except:
+            user = models.Username(username = username, email = email, firstname = firstname,
+                lastname = lastname, password = password )
+            user.save()
+            obj = {
+                'ok': True,
+                'status' : 'sucssecful'
+            }
     else:
-        request.session['error'] = 'Password is carnt'
-        status = False
-        return HttpResponseRedirect(reverse('firstApp:register'))
-    if status:
-        user = models.Username(username = username, email = email, firstname = firstname,
-         lastname = lastname, password = password )
-        user.save()
-        userget = get_object_or_404(models.Username, username = username)
-        request.session['user'] = username
-        request.session['id'] = userget.id
-    return HttpResponseRedirect(reverse('firstApp:index'))
+        obj = {
+            'ok': False,
+            'status' : 'A password is not the same as repeating a passworde'
+        }
+    return JsonResponse(obj)
 
 
 def login(request):
