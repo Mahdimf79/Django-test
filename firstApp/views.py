@@ -21,8 +21,12 @@ def index(request):
 
 
 def detail(request, pk):
+    user = request.session.get('user')
+    check = 0
+    if user != '':
+        check = 1
     question = get_object_or_404(models.Question, pk=pk)
-    context = {'Question' : question}
+    context = {'Question' : question, 'check' : check}
     return render(request, 'firstApp/detail.html', context)
 
 
@@ -33,16 +37,20 @@ def results(request, pk):
 
 
 def vote(request, pk):
-    question = get_object_or_404(models.Question, pk=pk)
-    try:
-        choice_selected = question.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, choice.DoesNotExist):
-        context1 = {'question' : question,'error_message': 'you didnt select a choice'}
-        return render(request, 'firstApp/detail.html',context1)
+    user = request.session.get('user')
+    if user == '':
+        return HttpResponseRedirect(reverse('firstApp:login'))
     else:
-        choice_selected.vote += 1
-        choice_selected.save()
-        return HttpResponseRedirect(reverse('firstApp:results', args=(question.id,)))
+        question = get_object_or_404(models.Question, pk=pk)
+        try:
+            choice_selected = question.choice_set.get(pk=request.POST['choice'])
+        except (KeyError, choice.DoesNotExist):
+            context1 = {'question' : question,'error_message': 'you didnt select a choice'}
+            return render(request, 'firstApp/detail.html',context1)
+        else:
+            choice_selected.vote += 1
+            choice_selected.save()
+            return HttpResponseRedirect(reverse('firstApp:results', args=(question.id,)))
 
 
 def setQuestion(request):
@@ -63,9 +71,13 @@ def create_question(request):
 
 
 def setChoice(request, pk):
-    question = get_object_or_404(models.Question, pk=pk)
-    context = {'Question' : question}
-    return render(request, 'firstApp/setChoice.html', context)
+    user = request.session.get('user')
+    if user == '':
+        return HttpResponseRedirect(reverse('firstApp:login'))
+    else:
+        question = get_object_or_404(models.Question, pk=pk)
+        context = {'Question' : question}
+        return render(request, 'firstApp/setChoice.html', context)
 
 
 def create_choice(request, pk):
@@ -76,11 +88,11 @@ def create_choice(request, pk):
 
 
 def register(request):
-    context = {'error' : ''}
-    if request.session.get('error') != '':
-        context = {'error' : request.session.get('error') }
-    request.session['error'] = ''
-    return render(request, 'firstApp/register.html', context)
+    user = request.session.get('user')
+    if user != '':
+        return HttpResponseRedirect(reverse('firstApp:index'))
+    else:
+        return render(request, 'firstApp/register.html')
 
 
 def register_set(request):
@@ -108,8 +120,11 @@ def register_set(request):
 
 
 def login(request):
-    context = {'url' : static(settings.STATIC_URL, document_root= settings.STATIC_ROOT)}
-    return render(request, 'firstApp/login.html', context)
+    user = request.session.get('user')
+    if user != '':
+        return HttpResponseRedirect(reverse('firstApp:index'))
+    else:
+        return render(request, 'firstApp/login.html')
 
 
 def login_set(request):

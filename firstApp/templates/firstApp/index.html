@@ -17,7 +17,9 @@
     {%for question in list_Question %}
       <li>
           <a href="{% url 'firstApp:detail' question.id %}">{{ question.text }}<a/>
-          <a href="{% url 'firstApp:setChoice' question.id %}"> Answere </a>
+          {% if logout == 1 %}
+            <a href="{% url 'firstApp:setChoice' question.id %}"> Answere </a>
+          {% endif %}
       </li>
     {% endfor %}
   </ul>

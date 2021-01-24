@@ -1,6 +1,3 @@
-{% if error %}
-  <h4> {{error}} </h4>
-{% endif %}
 <form method="post" id="form">
   {% csrf_token %}
   <input type="text" name="username" placeholder="Username..">
