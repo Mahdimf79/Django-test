@@ -1,16 +1,54 @@
-<div>
-  <p id="error"></p>
-</div>
-<form method="post" id="form">
-  {% csrf_token %}
-  <input type="text" name="username" id="username" placeholder="Username">
-  <input type="text" name="email" id="email" placeholder="Email">
-  <input type="text" name="firstname" id="firstname" placeholder="Firstname">
-  <input type="text" name="lastname" id="lastname" placeholder="Lastname">
-  <input type="text" name="password" id="password" placeholder="Password">
-  <input type="text" name="repassword" id="repassword" placeholder="RePassword">
-  <button id="sub" type="submit">Register</button>
-</form>
+<html lang="en">
+    <head>
+      {% load static %}
+        <meta charset="UTF-8">
+        <title>Login</title>
+        <link rel="stylesheet" href="{% static 'firstApp/login.css' %}">
+    </head>
+    <body>
+      <div>
+        <p id="error"></p>
+      </div>
+
+      <form method="post" id="form">
+      <div class="login-box">
+      <div class="text">
+          <p class="title">Here you can login</p>
+          <small>Let's join us :)</small>
+      </div>
+
+      {% csrf_token %}
+
+      <div class="inputs">
+        <label>Username</label>
+        <input type="text" placeholder="Username" name="username" id="username"/>
+
+        <label>Email</label>
+        <input type="text" name="email" id="email" placeholder="Email">
+
+        <label>Firstname</label>
+        <input type="text" name="firstname" id="firstname" placeholder="Firstname">
+
+        <label>Lastname</label>
+        <input type="text" name="lastname" id="lastname" placeholder="Lastname">
+
+        <label>Password</label>
+        <input type="text" name="password" id="password" placeholder="Password">
+
+        <label>RePassword</label>
+        <input type="text" name="repassword" id="repassword" placeholder="RePassword">
+
+        <button class="btn-login" id="sub">REGISTER</button>
+
+        <a href="#" class="forget">Forgot your password?</a>
+      </div>
+      </div>
+      </form>
+
+      <div class="pointer">
+      <a href="#">Signup</a>
+      <img src="img/icons-8-left.svg" alt="pointer" class="cursor">
+      </div>
 
 {% block javascript %}
 <script>
@@ -89,3 +127,6 @@
 
 </script>
 {% endblock javascript %}
+
+</body>
+</html>
